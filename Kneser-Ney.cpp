@@ -215,7 +215,7 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 			int denom_count = 0;
 
 			for (p = strtok(start_with.New_Search(denom), " "); p; p = strtok(NULL, " ")){
-				char *temp = new char[strlen(t_1) + strlen(t_2) + strlen(p) + 3];
+				char *temp = new char[strlen(t_1) + strlen(t_2) + strlen(t_3) + strlen(p) + 4];
 
 				strcpy(temp, t_1);
 				strcat(temp, " ");
