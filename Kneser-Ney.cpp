@@ -22,18 +22,7 @@ void KneserNey::Train(char corpus[]){
 	int number_words = 0;
 
 	strcpy(buffer, corpus);
-	for (p = strtok(buffer, " "); p; p = strtok(NULL, " "), number_words++){
-		char *content;
-
-		if (content = count.New_Search("<s>")){
-			sprintf(content, "%d", atoi(content) + 1);
-			count.Insert("<s>", content);
-			delete[] content;
-		}
-		else{
-			count.Insert("<s>", "1");
-		}
-	}
+	for (p = strtok(buffer, " "); p; p = strtok(NULL, " "), number_words++);
 
 	strcpy(buffer, corpus);
 	p = strtok(buffer, " ");
@@ -439,13 +428,18 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 	}
 	else
 	if (t_1){
+		char *p;
 		char *temp = new char[strlen("* ") + strlen(t_1) + 1];
 
 		strcpy(temp, "* ");
 		strcat(temp, t_1);
 
-		probability = (double)atoi(count.Search(temp)) / atoi(count.Search("* *"));
-
+		if (p = count.Search(temp)){
+			probability = atoi(p);
+		}
+		if (p = count.Search("* *")){
+			probability /= atoi(p);
+		}
 		delete[] temp;
 	}
 	return probability;
