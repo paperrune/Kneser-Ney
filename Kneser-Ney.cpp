@@ -126,29 +126,33 @@ void KneserNey::Train(char corpus[]){
 					strcat(temp[1], token[i + 2]);
 					strcat(temp[1], " *");
 					break;
+				default:
+					temp[0] = temp[1] = NULL;
 				}
 
-				for (int j = 0; j < 2; j++){
-					if (content = unique.New_Search(temp[j])){
-						if (!strstr(content, words)){
-							content = (char*)realloc(content, strlen(content) + strlen(words) + 2);
-							strcat(content, "/");
-							strcat(content, words);
-							unique.Insert(temp[j], content);
+				if (temp[0] && temp[1]){
+					for (int j = 0; j < 2; j++){
+						if (content = unique.New_Search(temp[j])){
+							if (!strstr(content, words)){
+								content = (char*)realloc(content, strlen(content) + strlen(words) + 2);
+								strcat(content, "/");
+								strcat(content, words);
+								unique.Insert(temp[j], content);
 
+								delete[] content;
+								content = count.New_Search(temp[j]);
+
+								sprintf(content, "%d", atoi(content) + 1);
+								count.Insert(temp[j], content);
+							}
 							delete[] content;
-							content = count.New_Search(temp[j]);
-
-							sprintf(content, "%d", atoi(content) + 1);
-							count.Insert(temp[j], content);
 						}
-						delete[] content;
+						else{
+							unique.Insert(temp[j], words);
+							count.Insert(temp[j], "1");
+						}
+						delete[] temp[j];
 					}
-					else{
-						unique.Insert(temp[j], words);
-						count.Insert(temp[j], "1");
-					}
-					delete[] temp[j];
 				}
 			}
 			delete[] words;
