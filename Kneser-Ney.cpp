@@ -35,6 +35,9 @@ void KneserNey::Train(char corpus[]){
 	delete[] buffer;
 
 	for (int n = 0; n < gram; n++){
+		N[n] = 0;
+	}
+	for (int n = 0; n < gram; n++){
 		for (int i = 0; i < number_words - n; i++){
 			char *content;
 			char *words = new char[2];
