@@ -8,6 +8,10 @@
 
 KneserNey::KneserNey(int gram){
 	N = new int[this->gram = gram + 1];
+	
+	for (int n = 0; n < gram + 1; n++){
+		N[n] = 0;
+	}
 }
 KneserNey::~KneserNey(){
 	delete[] N;
@@ -34,9 +38,6 @@ void KneserNey::Train(char corpus[]){
 	}
 	delete[] buffer;
 
-	for (int n = 0; n < gram; n++){
-		N[n] = 0;
-	}
 	for (int n = 0; n < gram; n++){
 		for (int i = 0; i < number_words - n; i++){
 			char *content;
@@ -206,6 +207,10 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 		strcat(denom, t_3);
 
 		discount = 3 - 4 * discount * N[4] / N[3];
+		
+		if (!(0 < discount && discount < 1)){
+			fprintf(stderr, "[Probability], [discount: %lf]\n", discount);
+		}
 
 		if (highest){
 			int denom_count = 0;
@@ -296,6 +301,10 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 		strcat(denom, t_2);
 
 		discount = 2 - 3 * discount * N[3] / N[2];
+		
+		if (!(0 < discount && discount < 1)){
+			fprintf(stderr, "[Probability], [discount: %lf]\n", discount);
+		}
 
 		if (highest){
 			int denom_count = 0;
@@ -376,6 +385,10 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 		strcpy(denom, t_1);
 
 		discount = 1 - 2 * discount * N[2] / N[1];
+		
+		if (!(0 < discount && discount < 1)){
+			fprintf(stderr, "[Probability], [discount: %lf]\n", discount);
+		}
 
 		if (highest){
 			int denom_count = 0;
