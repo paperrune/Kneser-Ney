@@ -1,14 +1,13 @@
 typedef struct Node{
 	int index;
-	int number_links;
-
-	char *character;
 
 	Node **link;
 }Node;
 
 class Dictionary{
 private:
+	char *buffer;
+
 	char **content;
 	char **string;
 
@@ -22,9 +21,7 @@ private:
 
 	void Release_Node(Node *node);
 
-	int Character_Index(char character_list[], char character);
-
-	Node *String_Node(bool construct, char string[]);
+	Node *Search_Node(bool construct, char string[]);
 public:
 	Dictionary();
 	~Dictionary();
@@ -33,5 +30,6 @@ public:
 	void Insert(char string[], char content[]);
 
 	char* Search(char string[]);
+	char *Search_Copy(char string[]);
 	char* New_Search(char string[]);
 };
