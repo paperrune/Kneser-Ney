@@ -6,8 +6,6 @@ typedef struct Node{
 
 class Dictionary{
 private:
-	char *buffer;
-
 	char **content;
 	char **string;
 
@@ -30,6 +28,6 @@ public:
 	void Insert(char string[], char content[]);
 
 	char* Search(char string[]);
-	char *Search_Copy(char string[]);
+	char *Search_Copy(char string[], char *buffer, int buffer_size);
 	char* New_Search(char string[]);
 };
