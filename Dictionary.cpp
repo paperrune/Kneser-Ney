@@ -49,7 +49,6 @@ Dictionary::Dictionary(){
 
 	maximum_number_words = 1;
 	number_words = 0;
-	buffer = new char[1000];
 	content = new char*[1];
 	string = new char*[1];
 
@@ -59,7 +58,6 @@ Dictionary::Dictionary(){
 Dictionary::~Dictionary(){
 	Release_Node(&root);
 
-	delete[] buffer;
 	delete[] content;
 	delete[] string;
 	delete[] deleted;
@@ -131,14 +129,20 @@ char* Dictionary::Search(char string[]){
 		return content[node->index];
 	}
 }
-char* Dictionary::Search_Copy(char string[]){
+char* Dictionary::Search_Copy(char string[], char *buffer, int buffer_size){
 	Node *node = Search_Node(false, string);
 
 	if (node == NULL || node->index == 0){
 		return NULL;
 	}
 	else{
-		strcpy(buffer, content[node->index]);
+		if (buffer_size <= strlen(content[node->index])){
+			fprintf(stderr, "[Search_Copy], [Insufficient buffer_size = %d. (required : %d)]\n", 100, 101);
+			buffer = NULL;
+		}
+		else{
+			strcpy(buffer, content[node->index]);
+		}
 		return buffer;
 	}
 }
