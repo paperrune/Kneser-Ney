@@ -386,13 +386,7 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 		strcpy(denom, t_1);
 
-		for (int i = 1; i >= 1; i--){
-			discount = i - (i + 1) * discount * N[(i + 1)] / N[i];
-
-			if (0 < discount && discount < 1){
-				break;
-			}
-		}
+		discount = 1 - 2 * discount * N[2] / N[1];
 
 		if (highest){
 			int denom_count = 0;
