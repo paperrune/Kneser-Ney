@@ -1,5 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,7 +6,7 @@
 
 KneserNey::KneserNey(int gram){
 	N = new int[this->gram = gram + 1];
-	
+
 	for (int n = 0; n < gram + 1; n++){
 		N[n] = 0;
 	}
@@ -206,10 +204,12 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 		strcat(denom, " ");
 		strcat(denom, t_3);
 
-		discount = 3 - 4 * discount * N[4] / N[3];
-		
-		if (!(0 < discount && discount < 1)){
-			fprintf(stderr, "[Probability], [discount: %lf]\n", discount);
+		for (int i = 3; i >= 1; i--){
+			discount = i - (i + 1) * discount * N[(i + 1)] / N[i];
+
+			if (0 < discount && discount < 1){
+				break;
+			}
 		}
 
 		if (highest){
@@ -300,10 +300,12 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 		strcat(denom, " ");
 		strcat(denom, t_2);
 
-		discount = 2 - 3 * discount * N[3] / N[2];
-		
-		if (!(0 < discount && discount < 1)){
-			fprintf(stderr, "[Probability], [discount: %lf]\n", discount);
+		for (int i = 2; i >= 1; i--){
+			discount = i - (i + 1) * discount * N[(i + 1)] / N[i];
+
+			if (0 < discount && discount < 1){
+				break;
+			}
 		}
 
 		if (highest){
@@ -384,10 +386,12 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 		strcpy(denom, t_1);
 
-		discount = 1 - 2 * discount * N[2] / N[1];
-		
-		if (!(0 < discount && discount < 1)){
-			fprintf(stderr, "[Probability], [discount: %lf]\n", discount);
+		for (int i = 1; i >= 1; i--){
+			discount = i - (i + 1) * discount * N[(i + 1)] / N[i];
+
+			if (0 < discount && discount < 1){
+				break;
+			}
 		}
 
 		if (highest){
