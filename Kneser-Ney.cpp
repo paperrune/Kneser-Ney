@@ -38,13 +38,16 @@ void KneserNey::Train(char corpus[]){
 	for (int n = 0; n < gram; n++){
 		for (int i = 0; i < number_words - n; i++){
 			char *content;
-			char *words = new char[2];
+			char *words = new char[1];
 
 			strcpy(words, "");
 			for (int j = 0; j <= n; j++){
 				words = (char*)realloc(words, strlen(words) + strlen(token[i + j]) + 2);
+
+				if (strlen(words)){
+					strcat(words, " ");
+				}
 				strcat(words, token[i + j]);
-				if (j < n) strcat(words, " ");
 			}
 			if (content = count.New_Search(words)){
 				if (atoi(content) <= gram) N[atoi(content)]--;
@@ -65,9 +68,14 @@ void KneserNey::Train(char corpus[]){
 
 				strcpy(words, "");
 				for (int j = 1; j <= n; j++){
+					words = (char*)realloc(words, strlen(words) + strlen(token[i + j - 1]) + 2);
+
+					if (strlen(words)){
+						strcat(words, " ");
+					}
 					strcat(words, token[i + j - 1]);
-					if (j < n) strcat(words, " ");
 				}
+
 				if (content = start_with.New_Search(words)){
 					if (!strstr(content, token[i + n])){
 						content = (char*)realloc(content, strlen(content) + strlen(token[i + n]) + 2);
@@ -83,8 +91,12 @@ void KneserNey::Train(char corpus[]){
 
 				strcpy(words, "");
 				for (int j = 0; j <= n; j++){
+					words = (char*)realloc(words, strlen(words) + strlen(token[i + j]) + 2);
+
+					if (strlen(words)){
+						strcat(words, " ");
+					}
 					strcat(words, token[i + j]);
-					if (j < n) strcat(words, " ");
 				}
 
 				switch (n){
@@ -152,7 +164,7 @@ void KneserNey::Train(char corpus[]){
 							unique.Insert(temp[j], words);
 							count.Insert(temp[j], "1");
 						}
-						delete[] temp[j];
+						if(temp[j]) delete[] temp[j];
 					}
 				}
 			}
