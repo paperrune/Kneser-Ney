@@ -33,7 +33,6 @@ void KneserNey::Train(char corpus[]){
 	for (int j = 0; p; p = strtok(NULL, " "), j++){
 		token[j] = p;
 	}
-	delete[] buffer;
 
 	for (int n = 0; n < gram; n++){
 		for (int i = 0; i < number_words - n; i++){
@@ -171,6 +170,7 @@ void KneserNey::Train(char corpus[]){
 			delete[] words;
 		}
 	}
+	delete[] buffer;
 	delete[] token;
 }
 
