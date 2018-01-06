@@ -31,8 +31,7 @@ void KneserNey::Train(char corpus[]){
 	token = new char*[number_words];
 
 	for (int j = 0; p; p = strtok(NULL, " "), j++){
-		token[j] = new char[strlen(p) + 1];
-		strcpy(token[j], p);
+		token[j] = p;
 	}
 	delete[] buffer;
 
@@ -159,9 +158,6 @@ void KneserNey::Train(char corpus[]){
 			}
 			delete[] words;
 		}
-	}
-	for (int j = 0; j < number_words; j++){
-		delete[] token[j];
 	}
 	delete[] token;
 }
