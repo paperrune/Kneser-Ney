@@ -18,6 +18,7 @@ public:
 	void Train(char corpus[]);
 
 	int Count(char word[]);
+	int Gram();
 
 	double Probability(char t_1[], char t_2[] = 0, char t_3[] = 0, char t_4[] = 0);
 };
