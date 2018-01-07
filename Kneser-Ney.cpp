@@ -244,45 +244,6 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 			}
 			probability += discount / denom_count * number_uniques * Probability(false, t_2, t_3, t_4);
 		}
-		else{
-			char *temp = new char[strlen("* ") + strlen(t_1) + strlen(t_2) + strlen(t_3) + strlen(t_4) + 4];
-
-			int numor_count = 0;
-			int denom_count = 0;
-
-			strcpy(temp, "* ");
-			strcat(temp, t_1);
-			strcat(temp, " ");
-			strcat(temp, t_2);
-			strcat(temp, " ");
-			strcat(temp, t_3);
-			strcat(temp, " ");
-			strcat(temp, t_4);
-
-			if (Count(temp)){
-				probability = Count(temp) - discount;
-			}
-
-			strcpy(temp, "* ");
-			strcat(temp, t_1);
-			strcat(temp, " ");
-			strcat(temp, t_2);
-			strcat(temp, " ");
-			strcat(temp, t_3);
-			strcat(temp, " *");
-
-			if (Count(temp)){
-				probability /= (denom_count = Count(temp));
-			}
-			for (char *p = strtok(buffer = start_with.New_Search(denom), " "); p; p = strtok(NULL, " ")){
-				number_uniques++;
-			}
-			delete[] buffer;
-
-			probability += discount / denom_count * number_uniques * Probability(false, t_2, t_3, t_4);
-
-			delete[] temp;
-		}
 		delete[] numor;
 		delete[] denom;
 	}
