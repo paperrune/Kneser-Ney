@@ -202,7 +202,7 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 		double discount = 3 - 4 * (double)N[1] / (N[1] + 2 * N[2]) * N[4] / N[3];
 
-		if (!_finite(discount)) discount = 0;
+		if (!_finite(discount) || discount < 0 || 1 < discount) discount = 0;
 
 		strcpy(numor, t_1);
 		strcat(numor, " ");
@@ -262,7 +262,7 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 		double discount = 2 - 3 * (double)N[1] / (N[1] + 2 * N[2]) * N[3] / N[2];
 
-		if (!_finite(discount)) discount = 0;
+		if (!_finite(discount) || discount < 0 || 1 < discount) discount = 0;
 
 		strcpy(numor, t_1);
 		strcat(numor, " ");
@@ -354,7 +354,7 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 		double discount = 1 - 2 * (double)N[1] / (N[1] + 2 * N[2]) * N[2] / N[1];
 
-		if (!_finite(discount)) discount = 0;
+		if (!_finite(discount) || discount < 0 || 1 < discount) discount = 0;
 
 		strcpy(numor, t_1);
 		strcat(numor, " ");
