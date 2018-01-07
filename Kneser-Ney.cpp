@@ -1,3 +1,4 @@
+#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -196,7 +197,9 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 		int number_uniques = 0;
 
-		double discount = (double)N[1] / (N[1] + 2 * N[2]);
+		double discount = 3 - 4 * (double)N[1] / (N[1] + 2 * N[2]) * N[4] / N[3];
+
+		if (!_finite(discount)) discount = 1;
 
 		strcpy(numor, t_1);
 		strcat(numor, " ");
@@ -211,14 +214,6 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 		strcat(denom, t_2);
 		strcat(denom, " ");
 		strcat(denom, t_3);
-
-		for (int i = 3; i >= 1; i--){
-			discount = i - (i + 1) * discount * N[(i + 1)] / N[i];
-
-			if (0 < discount && discount < 1){
-				break;
-			}
-		}
 
 		if (highest){
 			int denom_count = 0;
@@ -243,6 +238,9 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
+			}
+			if (denom_count == 0){
+				return Probability(false, t_2, t_3, t_4);
 			}
 			probability += discount / denom_count * number_uniques * Probability(false, t_2, t_3, t_4);
 		}
@@ -296,7 +294,9 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 		int number_uniques = 0;
 
-		double discount = (double)N[1] / (N[1] + 2 * N[2]);
+		double discount = 2 - 3 * (double)N[1] / (N[1] + 2 * N[2]) * N[3] / N[2];
+
+		if (!_finite(discount)) discount = 1;
 
 		strcpy(numor, t_1);
 		strcat(numor, " ");
@@ -307,14 +307,6 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 		strcpy(denom, t_1);
 		strcat(denom, " ");
 		strcat(denom, t_2);
-
-		for (int i = 2; i >= 1; i--){
-			discount = i - (i + 1) * discount * N[(i + 1)] / N[i];
-
-			if (0 < discount && discount < 1){
-				break;
-			}
-		}
 
 		if (highest){
 			int denom_count = 0;
@@ -337,6 +329,9 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
+			}
+			if (denom_count == 0){
+				return Probability(false, t_2, t_3);
 			}
 			probability += discount / denom_count * number_uniques * Probability(false, t_2, t_3);
 		}
@@ -366,6 +361,9 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 			if (Count(temp)){
 				probability /= (denom_count = Count(temp));
 			}
+			if (denom_count == 0){
+				return probability;
+			}
 			for (char *p = strtok(buffer = start_with.New_Search(denom), " "); p; p = strtok(NULL, " ")){
 				number_uniques++;
 			}
@@ -386,15 +384,15 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 		int number_uniques = 0;
 
-		double discount = (double)N[1] / (N[1] + 2 * N[2]);
+		double discount = 1 - 2 * (double)N[1] / (N[1] + 2 * N[2]) * N[2] / N[1];
+
+		if (!_finite(discount)) discount = 1;
 
 		strcpy(numor, t_1);
 		strcat(numor, " ");
 		strcat(numor, t_2);
 
 		strcpy(denom, t_1);
-
-		discount = 1 - 2 * discount * N[2] / N[1];
 
 		if (highest){
 			int denom_count = 0;
@@ -415,6 +413,9 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
+			}
+			if (denom_count == 0){
+				return Probability(false, t_2);
 			}
 			probability += discount / denom_count * number_uniques * Probability(false, t_2);
 		}
@@ -439,6 +440,9 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 			if (Count(temp)){
 				probability /= (denom_count = Count(temp));
+			}
+			if (denom_count == 0){
+				return probability;
 			}
 			for (char *p = strtok(buffer = start_with.New_Search(denom), " "); p; p = strtok(NULL, " ")){
 				number_uniques++;
