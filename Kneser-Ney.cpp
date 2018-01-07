@@ -175,6 +175,9 @@ void KneserNey::Train(char corpus[]){
 	delete[] token;
 }
 
+int KneserNey::Gram(){
+	return gram - 1;
+}
 int KneserNey::Count(char word[]){
 	char *content = count.Search(word);
 
@@ -218,29 +221,31 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 		if (highest){
 			int denom_count = 0;
 
-			for (char *p = strtok(buffer = start_with.New_Search(denom), " "); p; p = strtok(NULL, " ")){
-				char *temp = new char[strlen(t_1) + strlen(t_2) + strlen(t_3) + strlen(p) + 4];
+			if (buffer = start_with.New_Search(denom)){
+				for (char *p = strtok(buffer, " "); p; p = strtok(NULL, " ")){
+					char *temp = new char[strlen(t_1) + strlen(t_2) + strlen(t_3) + strlen(p) + 4];
 
-				strcpy(temp, t_1);
-				strcat(temp, " ");
-				strcat(temp, t_2);
-				strcat(temp, " ");
-				strcat(temp, t_3);
-				strcat(temp, " ");
-				strcat(temp, p);
+					strcpy(temp, t_1);
+					strcat(temp, " ");
+					strcat(temp, t_2);
+					strcat(temp, " ");
+					strcat(temp, t_3);
+					strcat(temp, " ");
+					strcat(temp, p);
 
-				denom_count += Count(temp);
-				number_uniques++;
+					denom_count += Count(temp);
+					number_uniques++;
 
-				delete[] temp;
+					delete[] temp;
+				}
+				delete[] buffer;
 			}
-			delete[] buffer;
 
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
 			}
 			if (denom_count == 0){
-				return Probability(false, t_2, t_3, t_4);
+				return probability;
 			}
 			probability += discount / denom_count * number_uniques * Probability(false, t_2, t_3, t_4);
 		}
@@ -272,27 +277,29 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 		if (highest){
 			int denom_count = 0;
 
-			for (char *p = strtok(buffer = start_with.New_Search(denom), " "); p; p = strtok(NULL, " ")){
-				char *temp = new char[strlen(t_1) + strlen(t_2) + strlen(p) + 3];
+			if (buffer = start_with.New_Search(denom)){
+				for (char *p = strtok(buffer, " "); p; p = strtok(NULL, " ")){
+					char *temp = new char[strlen(t_1) + strlen(t_2) + strlen(p) + 3];
 
-				strcpy(temp, t_1);
-				strcat(temp, " ");
-				strcat(temp, t_2);
-				strcat(temp, " ");
-				strcat(temp, p);
+					strcpy(temp, t_1);
+					strcat(temp, " ");
+					strcat(temp, t_2);
+					strcat(temp, " ");
+					strcat(temp, p);
 
-				denom_count += Count(temp);
-				number_uniques++;
+					denom_count += Count(temp);
+					number_uniques++;
 
-				delete[] temp;
+					delete[] temp;
+				}
+				delete[] buffer;
 			}
-			delete[] buffer;
 
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
 			}
 			if (denom_count == 0){
-				return Probability(false, t_2, t_3);
+				return probability;
 			}
 			probability += discount / denom_count * number_uniques * Probability(false, t_2, t_3);
 		}
@@ -358,25 +365,27 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 		if (highest){
 			int denom_count = 0;
 
-			for (char *p = strtok(buffer = start_with.New_Search(denom), " "); p; p = strtok(NULL, " ")){
-				char *temp = new char[strlen(t_1) + strlen(p) + 2];
+			if (buffer = start_with.New_Search(denom)){
+				for (char *p = strtok(buffer, " "); p; p = strtok(NULL, " ")){
+					char *temp = new char[strlen(t_1) + strlen(p) + 2];
 
-				strcpy(temp, t_1);
-				strcat(temp, " ");
-				strcat(temp, p);
+					strcpy(temp, t_1);
+					strcat(temp, " ");
+					strcat(temp, p);
 
-				denom_count += Count(temp);
-				number_uniques++;
+					denom_count += Count(temp);
+					number_uniques++;
 
-				delete[] temp;
+					delete[] temp;
+				}
+				delete[] buffer;
 			}
-			delete[] buffer;
 
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
 			}
 			if (denom_count == 0){
-				return Probability(false, t_2);
+				return probability;
 			}
 			probability += discount / denom_count * number_uniques * Probability(false, t_2);
 		}
