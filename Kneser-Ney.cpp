@@ -235,7 +235,6 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 				delete[] buffer;
 				delete[] string;
 			}
-
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
 			}
@@ -286,7 +285,6 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 				delete[] buffer;
 				delete[] string;
 			}
-
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
 			}
@@ -371,7 +369,6 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 				delete[] buffer;
 				delete[] string;
 			}
-
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
 			}
