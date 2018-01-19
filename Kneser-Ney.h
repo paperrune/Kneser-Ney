@@ -1,24 +1,25 @@
-#include "Dictionary.h"
+#include <sstream>
+#include <unordered_map>
+
+using namespace std;
 
 class KneserNey{
 private:
-	int gram;
-
 	int *N;
 
-	Dictionary count;
-	Dictionary start_with;
-	Dictionary unique;
-
-	double Probability(bool highest, char t_1[], char t_2[] = 0, char t_3[] = 0, char t_4[] = 0);
+	unordered_map<string, int> count;
+	unordered_map<string, string> start_with;
+	unordered_map<string, string> unique;
 public:
+	int gram;
+
 	KneserNey(int gram);
 	~KneserNey();
 
-	void Train(char corpus[]);
+	void Train(string corpus);
 
-	int Count(char word[]);
+	int Count(string word);
 	int Gram();
 
-	double Probability(char t_1[], char t_2[] = 0, char t_3[] = 0, char t_4[] = 0);
+	double Probability(string t_1, string t_2 = "", string t_3 = "", string t_4 = "", bool highest = true);
 };
