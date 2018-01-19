@@ -21,14 +21,11 @@ void KneserNey::Train(string corpus){
 
 	vector<string> token;
 
-	int number_words = 0;
-
-	for (string s; getline(buffer, s, ' '); number_words++){
+	for (string s; getline(buffer, s, ' ');){
 		token.push_back(s);
 	}
-
 	for (int n = 0; n < gram; n++){
-		for (int i = 0; i < number_words - n; i++){
+		for (int i = 0; i < (int)token.size() - n; i++){
 			string words;
 
 			for (int j = 0; j <= n; j++){
