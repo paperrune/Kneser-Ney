@@ -6,7 +6,7 @@
 #include "Kneser-Ney.h"
 
 KneserNey::KneserNey(int gram){
-	N = new int[this->gram = gram + 1];
+	N = new int[(this->gram = gram) + 1];
 
 	for (int n = 0; n < gram + 1; n++){
 		N[n] = 0;
@@ -16,187 +16,122 @@ KneserNey::~KneserNey(){
 	delete[] N;
 }
 
-void KneserNey::Train(char corpus[]){
-	char *buffer = new char[strlen(corpus) + 1];
-	char *p;
+void KneserNey::Train(string corpus){
+	istringstream buffer(corpus);
 
-	char **token;
+	vector<string> token;
 
 	int number_words = 0;
 
-	strcpy(buffer, corpus);
-	for (p = strtok(buffer, " "); p; p = strtok(NULL, " "), number_words++);
-
-	strcpy(buffer, corpus);
-	p = strtok(buffer, " ");
-	token = new char*[number_words];
-
-	for (int j = 0; p; p = strtok(NULL, " "), j++){
-		token[j] = p;
+	for (string s; getline(buffer, s, ' '); number_words++){
+		token.push_back(s);
 	}
 
 	for (int n = 0; n < gram; n++){
 		for (int i = 0; i < number_words - n; i++){
-			char *content;
-			char *words = new char[1];
+			string words;
 
-			strcpy(words, "");
 			for (int j = 0; j <= n; j++){
-				words = (char*)realloc(words, strlen(words) + strlen(token[i + j]) + 2);
-
-				if (strlen(words)){
-					strcat(words, " ");
+				if (!words.empty()){
+					words += ' ';
 				}
-				strcat(words, token[i + j]);
+				words += token[i + j];
 			}
-			if (content = count.New_Search(words)){
-				if (atoi(content) <= gram) N[atoi(content)]--;
+			if (count.find(words) != count.end()){
+				auto c = count.find(words);
 
-				sprintf(content, "%d", atoi(content) + 1);
-				count.Insert(words, content);
-
-				if (atoi(content) <= gram) N[atoi(content)]++;
-				delete[] content;
+				if (c->second <= gram) N[c->second]--;
+				c->second++;
+				if (c->second <= gram) N[c->second]++;
 			}
 			else{
-				count.Insert(words, "1");
+				count.insert(pair<string, int>(words, 1));
 				N[1]++;
 			}
 
 			if (n >= 1){
-				char *temp[2];
+				string temp[2];
 
-				strcpy(words, "");
+				words = "";
 				for (int j = 1; j <= n; j++){
-					words = (char*)realloc(words, strlen(words) + strlen(token[i + j - 1]) + 2);
-
-					if (strlen(words)){
-						strcat(words, " ");
+					if (!words.empty()){
+						words += ' ';
 					}
-					strcat(words, token[i + j - 1]);
+					words += token[i + j - 1];
 				}
 
-				if (content = start_with.New_Search(words)){
-					if (!strstr(content, token[i + n])){
-						content = (char*)realloc(content, strlen(content) + strlen(token[i + n]) + 2);
-						strcat(content, " ");
-						strcat(content, token[i + n]);
-						start_with.Insert(words, content);
+				if (start_with.find(words) != start_with.end()){
+					auto s = start_with.find(words);
+
+					if (s->second.find(token[i + n]) == string::npos){
+						s->second = s->second + ' ' + token[i + n];
 					}
-					delete[] content;
 				}
 				else{
-					start_with.Insert(words, token[i + n]);
+					start_with.insert(pair<string, string>(words, token[i + n]));
 				}
 
-				strcpy(words, "");
+				words = "";
 				for (int j = 0; j <= n; j++){
-					words = (char*)realloc(words, strlen(words) + strlen(token[i + j]) + 2);
-
-					if (strlen(words)){
-						strcat(words, " ");
+					if (!words.empty()){
+						words += ' ';
 					}
-					strcat(words, token[i + j]);
+					words += token[i + j];
 				}
 
 				switch (n){
 				case 1:
-					temp[0] = new char[strlen("* ") + strlen(token[i]) + 1];
-					temp[1] = new char[strlen("* *") + 1];
-
-					strcpy(temp[0], "* ");
-					strcat(temp[0], token[i]);
-
-					strcpy(temp[1], "* *");
+					temp[0] = "* " + token[i];
+					temp[1] = "* *";
 					break;
 				case 2:
-					temp[0] = new char[strlen("* ") + strlen(token[i + 1]) + strlen(token[i + 2]) + 2];
-					temp[1] = new char[strlen("* ") + strlen(token[i + 1]) + strlen(" *") + 1];
-
-					strcpy(temp[0], "* ");
-					strcat(temp[0], token[i + 1]);
-					strcat(temp[0], " ");
-					strcat(temp[0], token[i + 2]);
-
-					strcpy(temp[1], "* ");
-					strcat(temp[1], token[i + 1]);
-					strcat(temp[1], " *");
+					temp[0] = "* " + token[i + 1] + ' ' + token[i + 2];
+					temp[1] = "* " + token[i + 1] + " *";
 					break;
 				case 3:
-					temp[0] = new char[strlen("* ") + strlen(token[i + 1]) + strlen(token[i + 2]) + strlen(token[i + 3]) + 3];
-					temp[1] = new char[strlen("* ") + strlen(token[i + 1]) + strlen(token[i + 2]) + strlen(" *") + 2];
-
-					strcpy(temp[0], "* ");
-					strcat(temp[0], token[i + 1]);
-					strcat(temp[0], " ");
-					strcat(temp[0], token[i + 2]);
-					strcat(temp[0], " ");
-					strcat(temp[0], token[i + 3]);
-
-					strcpy(temp[1], "* ");
-					strcat(temp[1], token[i + 1]);
-					strcat(temp[1], " ");
-					strcat(temp[1], token[i + 2]);
-					strcat(temp[1], " *");
-					break;
-				default:
-					temp[0] = temp[1] = NULL;
+					temp[0] = "* " + token[i + 1] + ' ' + token[i + 2] + ' ' + token[i + 3];
+					temp[1] = "* " + token[i + 1] + ' ' + token[i + 2] + " *";
 				}
 
-				if (temp[0] && temp[1]){
+				if (!temp[0].empty() && !temp[1].empty()){
 					for (int j = 0; j < 2; j++){
-						if (content = unique.New_Search(temp[j])){
-							if (!strstr(content, words)){
-								content = (char*)realloc(content, strlen(content) + strlen(words) + 2);
-								strcat(content, "/");
-								strcat(content, words);
-								unique.Insert(temp[j], content);
+						if (unique.find(temp[j]) != unique.end()){
+							auto u = unique.find(temp[j]);
 
-								delete[] content;
-								content = count.New_Search(temp[j]);
+							if (u->second.find(words) == string::npos){
+								auto c = count.find(temp[j]);
 
-								sprintf(content, "%d", atoi(content) + 1);
-								count.Insert(temp[j], content);
+								c->second++;
+								u->second = u->second + '/' + words;
 							}
-							delete[] content;
 						}
 						else{
-							unique.Insert(temp[j], words);
-							count.Insert(temp[j], "1");
+							count.insert(pair<string, int>(temp[j], 1));
+							unique.insert(pair<string, string>(temp[j], words));
 						}
-						if (temp[j]) delete[] temp[j];
 					}
 				}
 			}
-			delete[] words;
 		}
 	}
-	delete[] buffer;
-	delete[] token;
+	token.clear();
 }
 
-int KneserNey::Gram(){
-	return gram - 1;
-}
-int KneserNey::Count(char word[]){
-	char *content = count.Search(word);
+int KneserNey::Count(string word){
+	auto c = count.find(word);
 
-	if (content){
-		return atoi(content);
+	if (c != count.end()){
+		return c->second;
 	}
 	return 0;
 }
 
-double KneserNey::Probability(char t_1[], char t_2[], char t_3[], char t_4[]){
-	return Probability(true, t_1, t_2, t_3, t_4);
-}
-double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], char t_4[]){
+double KneserNey::Probability(string t_1, string t_2, string t_3, string t_4, bool highest){
 	double probability = 0;
 
-	if (t_1 && t_2 && t_3 && t_4){
-		char *buffer;
-		char *numor = new char[strlen(t_1) + strlen(t_2) + strlen(t_3) + strlen(t_4) + 4];
-		char *denom = new char[strlen(t_1) + strlen(t_2) + strlen(t_3) + 3];
+	if (!t_1.empty() && !t_2.empty() && !t_3.empty() && !t_4.empty()){
+		string numor = numor + t_1 + ' ' + t_2 + ' ' + t_3 + ' ' + t_4;
+		string denom = denom + t_1 + ' ' + t_2 + ' ' + t_3;
 
 		int number_uniques = 0;
 
@@ -204,36 +139,18 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 		if (!_finite(discount) || discount < 0 || 1 < discount) discount = 0;
 
-		strcpy(numor, t_1);
-		strcat(numor, " ");
-		strcat(numor, t_2);
-		strcat(numor, " ");
-		strcat(numor, t_3);
-		strcat(numor, " ");
-		strcat(numor, t_4);
-
-		strcpy(denom, t_1);
-		strcat(denom, " ");
-		strcat(denom, t_2);
-		strcat(denom, " ");
-		strcat(denom, t_3);
-
 		if (highest){
 			int denom_count = 0;
 
-			if (buffer = start_with.New_Search(denom)){
-				char *string = new char[strlen(denom) + strlen(buffer) + 2];
+			auto s = start_with.find(denom);
 
-				for (char *p = strtok(buffer, " "); p; p = strtok(NULL, " ")){
-					strcpy(string, denom);
-					strcat(string, " ");
-					strcat(string, p);
+			if (s != start_with.end()){
+				istringstream iss(s->second);
 
-					denom_count += Count(string);
+				for (string s; getline(iss, s, ' ');){
+					denom_count += Count(denom + ' ' + s);
 					number_uniques++;
 				}
-				delete[] buffer;
-				delete[] string;
 			}
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
@@ -241,16 +158,13 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 			if (denom_count == 0){
 				return probability;
 			}
-			probability += discount / denom_count * number_uniques * Probability(false, t_2, t_3, t_4);
+			probability += discount / denom_count * number_uniques * Probability(t_2, t_3, t_4, "", false);
 		}
-		delete[] numor;
-		delete[] denom;
 	}
 	else
-	if (t_1 && t_2 && t_3){
-		char *buffer;
-		char *numor = new char[strlen(t_1) + strlen(t_2) + strlen(t_3) + 3];
-		char *denom = new char[strlen(t_1) + strlen(t_2) + 2];
+	if (!t_1.empty() && !t_2.empty() && !t_3.empty()){
+		string numor = t_1 + ' ' + t_2 + ' ' + t_3;
+		string denom = t_1 + ' ' + t_2;
 
 		int number_uniques = 0;
 
@@ -258,32 +172,18 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 
 		if (!_finite(discount) || discount < 0 || 1 < discount) discount = 0;
 
-		strcpy(numor, t_1);
-		strcat(numor, " ");
-		strcat(numor, t_2);
-		strcat(numor, " ");
-		strcat(numor, t_3);
-
-		strcpy(denom, t_1);
-		strcat(denom, " ");
-		strcat(denom, t_2);
-
 		if (highest){
 			int denom_count = 0;
 
-			if (buffer = start_with.New_Search(denom)){
-				char *string = new char[strlen(denom) + strlen(buffer) + 2];
+			auto s = start_with.find(denom);
 
-				for (char *p = strtok(buffer, " "); p; p = strtok(NULL, " ")){
-					strcpy(string, denom);
-					strcat(string, " ");
-					strcat(string, p);
+			if (s != start_with.end()){
+				istringstream iss(s->second);
 
-					denom_count += Count(string);
+				for (string s; getline(iss, s, ' ');){
+					denom_count += Count(denom + ' ' + s);
 					number_uniques++;
 				}
-				delete[] buffer;
-				delete[] string;
 			}
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
@@ -291,83 +191,59 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 			if (denom_count == 0){
 				return probability;
 			}
-			probability += discount / denom_count * number_uniques * Probability(false, t_2, t_3);
+			probability += discount / denom_count * number_uniques * Probability(t_2, t_3, "", "", false);
 		}
 		else{
-			char *temp = new char[strlen("* ") + strlen(t_1) + strlen(t_2) + strlen(t_3) + 3];
+			string temp = "* " + t_1 + ' ' + t_2 + ' ' + t_3;
 
 			int numor_count = 0;
 			int denom_count = 0;
 
-			strcpy(temp, "* ");
-			strcat(temp, t_1);
-			strcat(temp, " ");
-			strcat(temp, t_2);
-			strcat(temp, " ");
-			strcat(temp, t_3);
-
 			if (Count(temp)){
 				probability = Count(temp) - discount;
 			}
-
-			strcpy(temp, "* ");
-			strcat(temp, t_1);
-			strcat(temp, " ");
-			strcat(temp, t_2);
-			strcat(temp, " *");
-
-			if (Count(temp)){
+			if (Count(temp = "* " + t_1 + ' ' + t_2 + " *")){
 				probability /= (denom_count = Count(temp));
 			}
 			if (denom_count == 0){
 				return probability;
 			}
-			for (char *p = strtok(buffer = start_with.New_Search(denom), " "); p; p = strtok(NULL, " ")){
-				number_uniques++;
+
+			auto s = start_with.find(denom);
+
+			if (s != start_with.end()){
+				istringstream iss(s->second);
+
+				for (string s; getline(iss, s, ' ');){
+					number_uniques++;
+				}
 			}
-			delete[] buffer;
-
-			probability += discount / denom_count * number_uniques * Probability(false, t_2, t_3);
-
-			delete[] temp;
+			probability += discount / denom_count * number_uniques * Probability(t_2, t_3, "", "", false);
 		}
-		delete[] numor;
-		delete[] denom;
 	}
 	else
-	if (t_1 && t_2){
-		char *buffer;
-		char *numor = new char[strlen(t_1) + strlen(t_2) + 2];
-		char *denom = new char[strlen(t_1) + 1];
+	if (!t_1.empty() && !t_2.empty()){
+		string numor = t_1 + ' ' + t_2;
+		string denom = t_1;
 
 		int number_uniques = 0;
 
 		double discount = 1 - 2 * (double)N[1] / (N[1] + 2 * N[2]) * N[2] / N[1];
 
 		if (!_finite(discount) || discount < 0 || 1 < discount) discount = 0;
-
-		strcpy(numor, t_1);
-		strcat(numor, " ");
-		strcat(numor, t_2);
-
-		strcpy(denom, t_1);
-
+		
 		if (highest){
 			int denom_count = 0;
 
-			if (buffer = start_with.New_Search(denom)){
-				char *string = new char[strlen(denom) + strlen(buffer) + 2];
+			auto s = start_with.find(denom);
 
-				for (char *p = strtok(buffer, " "); p; p = strtok(NULL, " ")){
-					strcpy(string, denom);
-					strcat(string, " ");
-					strcat(string, p);
+			if (s != start_with.end()){
+				istringstream iss(s->second);
 
-					denom_count += Count(string);
+				for (string s; getline(iss, s, ' ');){
+					denom_count += Count(denom + ' ' + s);
 					number_uniques++;
 				}
-				delete[] buffer;
-				delete[] string;
 			}
 			if (Count(numor)){
 				probability = (Count(numor) - discount) / denom_count;
@@ -375,56 +251,39 @@ double KneserNey::Probability(bool highest, char t_1[], char t_2[], char t_3[], 
 			if (denom_count == 0){
 				return probability;
 			}
-			probability += discount / denom_count * number_uniques * Probability(false, t_2);
+			probability += discount / denom_count * number_uniques * Probability(t_2, "", "", "", false);
 		}
 		else{
-			char *temp = new char[strlen("* ") + strlen(t_1) + strlen(t_2) + 2];
+			string temp = "* " + t_1 + ' ' + t_2;
 
 			int numor_count = 0;
 			int denom_count = 0;
 
-			strcpy(temp, "* ");
-			strcat(temp, t_1);
-			strcat(temp, " ");
-			strcat(temp, t_2);
-
 			if (Count(temp)){
 				probability = Count(temp) - discount;
 			}
-
-			strcpy(temp, "* ");
-			strcat(temp, t_1);
-			strcat(temp, " *");
-
-			if (Count(temp)){
+			if (Count(temp = "* " + t_1 + " *")){
 				probability /= (denom_count = Count(temp));
 			}
 			if (denom_count == 0){
 				return probability;
 			}
-			for (char *p = strtok(buffer = start_with.New_Search(denom), " "); p; p = strtok(NULL, " ")){
-				number_uniques++;
+
+			auto s = start_with.find(denom);
+
+			if (s != start_with.end()){
+				istringstream iss(s->second);
+
+				for (string s; getline(iss, s, ' ');){
+					number_uniques++;
+				}
 			}
-			delete[] buffer;
-
-			probability += discount / denom_count * number_uniques * Probability(false, t_2);
-
-			delete[] temp;
+			probability += discount / denom_count * number_uniques * Probability(t_2, "", "", "", false);
 		}
-		delete[] numor;
-		delete[] denom;
 	}
 	else
-	if (t_1){
-		if (Count("* *")){
-			char *temp = new char[strlen("* ") + strlen(t_1) + 1];
-
-			strcpy(temp, "* ");
-			strcat(temp, t_1);
-
-			probability = (double)Count(temp) / Count("* *");
-			delete[] temp;
-		}
+	if (!t_1.empty() && Count("* *")){
+		probability = (double)Count("* " + t_1) / Count("* *");
 	}
 	return probability;
 }
