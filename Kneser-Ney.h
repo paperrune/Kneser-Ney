@@ -19,7 +19,6 @@ public:
 	void Train(string corpus);
 
 	int Count(string word);
-	int Gram();
 
 	double Probability(string t_1, string t_2 = "", string t_3 = "", string t_4 = "", bool highest = true);
 };
